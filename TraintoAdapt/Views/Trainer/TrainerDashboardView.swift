@@ -14,9 +14,9 @@ struct TrainerDashboardView: View {
             VStack(alignment: .leading, spacing: 24) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Hello, \(trainer.firstName)")
-                        .font(.largeTitle.bold())
+                        .font(Font.largeTitle.bold())
                     Text("Here's what's on today")
-                        .font(.subheadline)
+                        .font(Font.subheadline)
                         .foregroundStyle(.secondary)
                 }
                 .padding(.horizontal)
@@ -66,8 +66,8 @@ struct StatTile: View {
         VStack(alignment: .leading, spacing: 8) {
             Image(systemName: systemImage)
                 .foregroundStyle(Color.brandPrimary)
-            Text(value).font(.title2.bold())
-            Text(title).font(.caption).foregroundStyle(.secondary)
+            Text(value).font(Font.title2.bold())
+            Text(title).font(Font.caption).foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()

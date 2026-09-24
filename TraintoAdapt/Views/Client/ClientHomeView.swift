@@ -16,10 +16,10 @@ struct ClientHomeView: View {
             VStack(alignment: .leading, spacing: 24) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Welcome back,")
-                        .font(.subheadline)
+                        .font(Font.subheadline)
                         .foregroundStyle(.secondary)
                     Text(client.firstName)
-                        .font(.largeTitle.bold())
+                        .font(Font.largeTitle.bold())
                 }
                 .padding(.horizontal)
 
@@ -66,7 +66,7 @@ struct ClientHomeView: View {
     private var quickLinks: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Quick Links")
-                .font(.headline)
+                .font(Font.headline)
                 .padding(.horizontal)
 
             VStack(spacing: 0) {

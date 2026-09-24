@@ -7,10 +7,10 @@ struct EmptyStateRow: View {
     var body: some View {
         VStack(spacing: 10) {
             Image(systemName: systemImage)
-                .font(.system(size: 32))
+                .font(Font.system(size: 32))
                 .foregroundStyle(.secondary)
             Text(message)
-                .font(.subheadline)
+                .font(Font.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
         }

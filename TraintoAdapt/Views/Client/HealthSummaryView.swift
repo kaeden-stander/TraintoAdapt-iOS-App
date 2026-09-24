@@ -17,9 +17,9 @@ struct HealthSummaryView: View {
                 Section {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Connect Apple Health")
-                            .font(.headline)
+                            .font(Font.headline)
                         Text("Grant access to read steps, heart rate, active energy and workouts. If you wear an Apple Watch, this data syncs in automatically.")
-                            .font(.subheadline)
+                            .font(Font.subheadline)
                             .foregroundStyle(.secondary)
                         Button {
                             Task { await viewModel.connect() }
@@ -93,8 +93,8 @@ private struct HealthStat: View {
         VStack(spacing: 4) {
             Image(systemName: systemImage)
                 .foregroundStyle(Color.brandPrimary)
-            Text(value).font(.headline)
-            Text(label).font(.caption2).foregroundStyle(.secondary)
+            Text(value).font(Font.headline)
+            Text(label).font(Font.caption2).foregroundStyle(.secondary)
         }
     }
 }
@@ -105,16 +105,16 @@ private struct WorkoutRow: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text(workout.activityName).font(.subheadline.weight(.medium))
+                Text(workout.activityName).font(Font.subheadline.weight(.medium))
                 Text(workout.start.formatted(date: .abbreviated, time: .shortened))
-                    .font(.caption)
+                    .font(Font.caption)
                     .foregroundStyle(.secondary)
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 2) {
-                Text("\(workout.durationMinutes) min").font(.caption)
+                Text("\(workout.durationMinutes) min").font(Font.caption)
                 if let energy = workout.totalEnergyKcal {
-                    Text("\(Int(energy)) kcal").font(.caption).foregroundStyle(.secondary)
+                    Text("\(Int(energy)) kcal").font(Font.caption).foregroundStyle(.secondary)
                 }
             }
         }

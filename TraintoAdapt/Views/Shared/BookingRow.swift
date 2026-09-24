@@ -9,21 +9,21 @@ struct BookingRow: View {
         HStack(spacing: 14) {
             VStack {
                 Text(booking.startDate.formatted(.dateTime.day()))
-                    .font(.title3.bold())
+                    .font(Font.title3.bold())
                 Text(booking.startDate.formatted(.dateTime.month(.abbreviated)))
-                    .font(.caption2)
+                    .font(Font.caption2)
                     .textCase(.uppercase)
             }
             .foregroundStyle(Color.brandPrimary)
             .frame(width: 44)
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(booking.sessionType.rawValue).font(.subheadline.weight(.semibold))
+                Text(booking.sessionType.rawValue).font(Font.subheadline.weight(.semibold))
                 Text(clientName.map { "\($0) · \(trainerName)" } ?? trainerName)
-                    .font(.caption)
+                    .font(Font.caption)
                     .foregroundStyle(.secondary)
                 Text("\(booking.startDate.formatted(date: .omitted, time: .shortened)) · \(booking.durationMinutes) min · \(booking.location)")
-                    .font(.caption)
+                    .font(Font.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             }
@@ -48,7 +48,7 @@ struct StatusBadge: View {
 
     var body: some View {
         Text(status.displayName)
-            .font(.caption2.weight(.semibold))
+            .font(Font.caption2.weight(.semibold))
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .background(tint.opacity(0.15), in: Capsule())

@@ -14,16 +14,16 @@ struct AdminEventsView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Label(event.category.rawValue, systemImage: event.category.systemImage)
-                            .font(.caption.weight(.semibold))
+                            .font(Font.caption.weight(.semibold))
                             .foregroundStyle(Color.brandPrimary)
                         Spacer()
                         Text(event.date.formatted(date: .abbreviated, time: .shortened))
-                            .font(.caption)
+                            .font(Font.caption)
                             .foregroundStyle(.secondary)
                     }
-                    Text(event.title).font(.headline)
+                    Text(event.title).font(Font.headline)
                     Text("\(event.attendeeIDs.count)/\(event.capacity) attending · \(event.location)")
-                        .font(.caption)
+                        .font(Font.caption)
                         .foregroundStyle(.secondary)
                 }
                 .padding(.vertical, 4)

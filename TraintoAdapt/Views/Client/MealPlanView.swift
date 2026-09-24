@@ -20,7 +20,7 @@ struct MealPlanView: View {
                         ForEach(viewModel.mealsGrouped, id: \.type) { group in
                             VStack(alignment: .leading, spacing: 8) {
                                 Label(group.type.rawValue, systemImage: group.type.systemImage)
-                                    .font(.headline)
+                                    .font(Font.headline)
                                     .padding(.horizontal)
 
                                 VStack(spacing: 0) {
@@ -38,7 +38,7 @@ struct MealPlanView: View {
 
                         if let notes = plan.notes {
                             SectionCard(title: "Coach Notes") {
-                                Text(notes).font(.subheadline)
+                                Text(notes).font(Font.subheadline)
                             }
                             .padding(.horizontal)
                         }
@@ -61,10 +61,10 @@ struct MealPlanView: View {
 
     private func planHeader(_ plan: MealPlan) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(plan.title).font(.title2.bold())
+            Text(plan.title).font(Font.title2.bold())
             Text("\(plan.startDate.formatted(date: .abbreviated, time: .omitted))" +
                  (plan.endDate.map { " – \($0.formatted(date: .abbreviated, time: .omitted))" } ?? ""))
-                .font(.subheadline)
+                .font(Font.subheadline)
                 .foregroundStyle(.secondary)
         }
         .padding(.horizontal)
@@ -92,14 +92,14 @@ private struct MealRow: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text(meal.name).font(.subheadline.weight(.medium))
+                Text(meal.name).font(Font.subheadline.weight(.medium))
                 Text("P \(meal.proteinGrams)g · C \(meal.carbsGrams)g · F \(meal.fatGrams)g")
-                    .font(.caption)
+                    .font(Font.caption)
                     .foregroundStyle(.secondary)
             }
             Spacer()
             Text("\(meal.calories) kcal")
-                .font(.caption.weight(.semibold))
+                .font(Font.caption.weight(.semibold))
                 .foregroundStyle(Color.brandPrimary)
         }
         .padding()
@@ -113,9 +113,9 @@ private struct MacroStat: View {
 
     var body: some View {
         VStack(spacing: 2) {
-            Text(value).font(.title3.bold())
-            Text(unit).font(.caption2).foregroundStyle(.secondary)
-            Text(label).font(.caption).foregroundStyle(.secondary)
+            Text(value).font(Font.title3.bold())
+            Text(unit).font(Font.caption2).foregroundStyle(.secondary)
+            Text(label).font(Font.caption).foregroundStyle(.secondary)
         }
     }
 }

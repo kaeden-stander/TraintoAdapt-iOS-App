@@ -26,9 +26,9 @@ struct AdminUsersView: View {
                         InitialsAvatar(initials: user.initials)
                             .frame(width: 40, height: 40)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(user.fullName).font(.subheadline.weight(.medium))
+                            Text(user.fullName).font(Font.subheadline.weight(.medium))
                             Text(role == .client ? user.membershipStatus.displayName : (user.specialties.first ?? "Trainer"))
-                                .font(.caption)
+                                .font(Font.caption)
                                 .foregroundStyle(.secondary)
                         }
                     }
@@ -55,8 +55,8 @@ struct AdminUserDetailView: View {
                     InitialsAvatar(initials: user.initials)
                         .frame(width: 56, height: 56)
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(user.fullName).font(.headline)
-                        Text(user.email).font(.subheadline).foregroundStyle(.secondary)
+                        Text(user.fullName).font(Font.headline)
+                        Text(user.email).font(Font.subheadline).foregroundStyle(.secondary)
                     }
                 }
                 .padding(.vertical, 4)

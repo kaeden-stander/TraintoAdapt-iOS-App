@@ -9,9 +9,9 @@ struct AdminDashboardView: View {
             VStack(alignment: .leading, spacing: 24) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Studio Overview")
-                        .font(.largeTitle.bold())
+                        .font(Font.largeTitle.bold())
                     Text("Welcome, \(admin.firstName)")
-                        .font(.subheadline)
+                        .font(Font.subheadline)
                         .foregroundStyle(.secondary)
                 }
                 .padding(.horizontal)

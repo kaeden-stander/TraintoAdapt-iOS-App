@@ -13,7 +13,7 @@ struct QuickLinkRow: View {
                 .foregroundStyle(.primary)
             Spacer()
             Image(systemName: "chevron.right")
-                .font(.caption)
+                .font(Font.caption)
                 .foregroundStyle(.tertiary)
         }
         .padding()

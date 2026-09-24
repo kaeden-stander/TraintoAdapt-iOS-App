@@ -22,8 +22,8 @@ struct TrainerClientDetailView: View {
                     InitialsAvatar(initials: client.initials)
                         .frame(width: 56, height: 56)
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(client.fullName).font(.headline)
-                        Text(client.email).font(.subheadline).foregroundStyle(.secondary)
+                        Text(client.fullName).font(Font.headline)
+                        Text(client.email).font(Font.subheadline).foregroundStyle(.secondary)
                     }
                 }
                 .padding(.vertical, 4)
@@ -42,9 +42,9 @@ struct TrainerClientDetailView: View {
             Section("Meal Plan") {
                 if let plan = mealPlanViewModel.mealPlan {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(plan.title).font(.subheadline.weight(.medium))
+                        Text(plan.title).font(Font.subheadline.weight(.medium))
                         Text("\(plan.dailyCalorieTarget) kcal/day target")
-                            .font(.caption)
+                            .font(Font.caption)
                             .foregroundStyle(.secondary)
                     }
                 } else {

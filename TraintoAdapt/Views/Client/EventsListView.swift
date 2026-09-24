@@ -41,27 +41,27 @@ struct EventRow: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Label(event.category.rawValue, systemImage: event.category.systemImage)
-                    .font(.caption.weight(.semibold))
+                    .font(Font.caption.weight(.semibold))
                     .foregroundStyle(Color.brandPrimary)
                 Spacer()
                 Text(event.date.formatted(date: .abbreviated, time: .shortened))
-                    .font(.caption)
+                    .font(Font.caption)
                     .foregroundStyle(.secondary)
             }
 
-            Text(event.title).font(.headline)
+            Text(event.title).font(Font.headline)
             Text(event.eventDescription)
-                .font(.subheadline)
+                .font(Font.subheadline)
                 .foregroundStyle(.secondary)
                 .lineLimit(3)
 
             HStack {
                 Label(event.location, systemImage: "mappin.and.ellipse")
-                    .font(.caption)
+                    .font(Font.caption)
                     .foregroundStyle(.secondary)
                 Spacer()
                 Text(event.isFull ? "Full" : "\(event.spotsRemaining) spots left")
-                    .font(.caption.weight(.medium))
+                    .font(Font.caption.weight(.medium))
                     .foregroundStyle(event.isFull ? .red : .secondary)
             }
 

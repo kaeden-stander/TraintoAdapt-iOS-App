@@ -22,9 +22,9 @@ struct TrainerClientsView: View {
                         InitialsAvatar(initials: client.initials)
                             .frame(width: 40, height: 40)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(client.fullName).font(.subheadline.weight(.medium))
+                            Text(client.fullName).font(Font.subheadline.weight(.medium))
                             Text(client.membershipStatus.displayName)
-                                .font(.caption)
+                                .font(Font.caption)
                                 .foregroundStyle(.secondary)
                         }
                     }

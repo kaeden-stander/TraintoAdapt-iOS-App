@@ -33,7 +33,7 @@ struct LoginView: View {
 
                         if let errorMessage = viewModel.errorMessage {
                             Text(errorMessage)
-                                .font(.footnote)
+                                .font(Font.footnote)
                                 .foregroundStyle(.red)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
@@ -86,10 +86,10 @@ struct LoginView: View {
             }
 
             Text("TrainToAdapt")
-                .font(.largeTitle.bold())
+                .font(Font.largeTitle.bold())
                 .foregroundStyle(.white)
             Text("traintoadapt.co.uk")
-                .font(.subheadline)
+                .font(Font.subheadline)
                 .foregroundStyle(Color.brandSecondary)
         }
     }
@@ -97,7 +97,7 @@ struct LoginView: View {
     private var demoAccess: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Quick demo access")
-                .font(.caption)
+                .font(Font.caption)
                 .foregroundStyle(Color.brandSecondary)
                 .textCase(.uppercase)
 
@@ -108,7 +108,7 @@ struct LoginView: View {
                         Task { await viewModel.signIn(into: appState) }
                     } label: {
                         Label(role.displayName, systemImage: role.systemImage)
-                            .font(.footnote.weight(.medium))
+                            .font(Font.footnote.weight(.medium))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
                     }

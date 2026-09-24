@@ -46,9 +46,9 @@ struct TrainerMealPlanEditorView: View {
             Section("Meals") {
                 ForEach(meals) { meal in
                     VStack(alignment: .leading) {
-                        Text(meal.name).font(.subheadline.weight(.medium))
+                        Text(meal.name).font(Font.subheadline.weight(.medium))
                         Text("\(meal.type.rawValue) · \(meal.calories) kcal")
-                            .font(.caption)
+                            .font(Font.caption)
                             .foregroundStyle(.secondary)
                     }
                 }

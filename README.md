@@ -4,12 +4,14 @@ Native iOS app for [traintoadapt.co.uk](https://traintoadapt.co.uk), built with 
 
 ## Branding
 
-The app icon and login screen use the TrainToAdapt logo mark, sampled directly for two brand colours (`Resources/Assets.xcassets`):
+The app icon and UI use the TrainToAdapt logo mark, sampled directly for the brand colours (`Resources/Assets.xcassets`):
 
-- `AccentColor` — the cyan from the swoosh (`#58C6E3`), used app-wide as the tint colour for buttons, links and highlights (`Color.brandPrimary` in `Views/Shared/Color+Brand.swift`).
+- `AccentColor` — the cyan from the swoosh (`#58C6E3`), used app-wide as the tint colour for buttons, links and highlights (`Color.brandPrimary` in `Views/Shared/Color+Brand.swift`), and as the navigation bar colour on every tab (`brandedNavigationBar()` in `Live/Views/BrandedChrome.swift`, applied to both the live client experience and Demo Mode).
 - `BrandSecondary` — the warm grey from the "T" (`#AFABA2`), used for muted/secondary brand accents (`Color.brandSecondary`).
+- `Color.brandInk` — the near-black behind the logo mark, used as the app's base background everywhere: the whole app forces dark mode (`.preferredColorScheme(.dark)` in `App/TraintoAdaptApp.swift`) so backgrounds are always black with white text, rather than switching to a lighter background in system light mode.
+- `Color.brandSurface` — a solid, slightly-raised dark grey for cards and rows (`SectionCard`, plan cards, list rows). Everything that used to sit on `.thinMaterial` now sits on this instead — a blurred material reads muddy on a pure black background, so cards are solid surfaces with the cyan/grey brand colours doing the contrast work.
 
-The login screen (`Views/Auth/LoginView.swift`) is the one place styled to match the logo's black background exactly (`Color.brandInk`, forced dark regardless of system appearance), since it's the app's main branding moment; the rest of the app uses standard adaptive light/dark backgrounds with the brand cyan as accent, so lists and forms stay readable in both appearances.
+Navigation uses the standard Apple large-title style throughout: tab roots (Home, Book, Plans, Events, Admin, Account, Dashboard, Schedule, Clients) show a large title with the cyan nav bar behind it; pushed detail screens and modal forms (confirm booking, new event, edit meal plan) use the compact inline title, matching how Apple's own apps distinguish a tab's home screen from a task inside it.
 
 ## Requirements
 

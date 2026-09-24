@@ -31,7 +31,7 @@ struct MealPlanView: View {
                                         }
                                     }
                                 }
-                                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 14))
+                                .background(Color.brandSurface, in: RoundedRectangle(cornerRadius: 14))
                                 .padding(.horizontal)
                             }
                         }

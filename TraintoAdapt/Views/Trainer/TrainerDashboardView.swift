@@ -70,6 +70,6 @@ struct StatTile: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 14))
+        .background(Color.brandSurface, in: RoundedRectangle(cornerRadius: 14))
     }
 }

@@ -13,6 +13,7 @@ struct TraintoAdaptApp: App {
                 .environmentObject(authService)
                 .environmentObject(liveSession)
                 .tint(Color.brandPrimary)
+                .preferredColorScheme(.dark)
         }
     }
 }

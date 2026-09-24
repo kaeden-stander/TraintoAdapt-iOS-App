@@ -12,8 +12,13 @@ extension Color {
     /// lean on the cyan for everything.
     static let brandSecondary = Color("BrandSecondary", bundle: .main)
 
-    /// The near-black used behind the logo mark. Used for brand moments
-    /// (login screen) rather than as a general-purpose background, so the
-    /// rest of the app keeps native light/dark mode support.
+    /// The near-black used app-wide as the base background, matching the
+    /// login screen so the whole app reads as one consistent, dark brand
+    /// surface rather than switching to a lighter system background.
     static let brandInk = Color(red: 0.03, green: 0.03, blue: 0.03)
+
+    /// A slightly-raised solid surface for cards and rows on top of
+    /// `brandInk`. Solid rather than translucent material, since a black
+    /// background makes `.thinMaterial`'s blur read muddy instead of crisp.
+    static let brandSurface = Color(red: 0.11, green: 0.11, blue: 0.12)
 }

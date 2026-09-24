@@ -29,8 +29,7 @@ struct ClientHomeView: View {
             }
             .padding(.vertical)
         }
-        .navigationTitle("TrainToAdapt")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Home")
         .task {
             await bookingViewModel.load()
             await healthViewModel.refresh()
@@ -83,7 +82,7 @@ struct ClientHomeView: View {
                     QuickLinkRow(systemImage: "star.fill", title: "Upcoming Events")
                 }
             }
-            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 14))
+            .background(Color.brandSurface, in: RoundedRectangle(cornerRadius: 14))
             .padding(.horizontal)
         }
     }

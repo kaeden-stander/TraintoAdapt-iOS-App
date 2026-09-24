@@ -13,6 +13,6 @@ struct SectionCard<Content: View>: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
+        .background(Color.brandSurface, in: RoundedRectangle(cornerRadius: 16))
     }
 }

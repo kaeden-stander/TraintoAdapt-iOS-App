@@ -50,8 +50,7 @@ struct LiveHomeView: View {
             }
             .padding(.vertical)
         }
-        .navigationTitle("TrainToAdapt")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Home")
         .task {
             await session.refreshMe()
             await bookingViewModel.load()

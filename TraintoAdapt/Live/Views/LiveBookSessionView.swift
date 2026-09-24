@@ -38,8 +38,8 @@ struct LiveBookSessionView: View {
             }
             .padding(.vertical)
         }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Book a Session")
+        .background(Color.brandInk)
+        .navigationTitle("Book")
         .task {
             await session.refreshMe()
             await viewModel.load()
@@ -92,7 +92,7 @@ struct LiveBookSessionView: View {
                     }
                 }
             }
-            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 14))
+            .background(Color.brandSurface, in: RoundedRectangle(cornerRadius: 14))
             .padding(.horizontal)
         }
     }

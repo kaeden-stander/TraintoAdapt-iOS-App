@@ -121,7 +121,7 @@ struct LoginView: View {
                     .textContentType(.name)
                     .focused($focusedField, equals: .fullName)
                     .padding()
-                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                    .background(Color.brandSurface, in: RoundedRectangle(cornerRadius: 12))
             }
 
             TextField("Email", text: $liveAuth.email)
@@ -131,13 +131,13 @@ struct LoginView: View {
                 .autocorrectionDisabled()
                 .focused($focusedField, equals: .email)
                 .padding()
-                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                .background(Color.brandSurface, in: RoundedRectangle(cornerRadius: 12))
 
             SecureField("Password", text: $liveAuth.password)
                 .textContentType(liveAuth.mode == .signIn ? .password : .newPassword)
                 .focused($focusedField, equals: .password)
                 .padding()
-                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                .background(Color.brandSurface, in: RoundedRectangle(cornerRadius: 12))
 
             Button {
                 focusedField = nil

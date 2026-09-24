@@ -49,7 +49,7 @@ struct LivePlansView: View {
             }
             .padding(.vertical)
         }
-        .navigationTitle("Plans & Pricing")
+        .navigationTitle("Plans")
         .task { await viewModel.load() }
         .refreshable { await viewModel.load() }
         .safariSheet($viewModel.checkoutURL) {
@@ -174,7 +174,7 @@ private struct PlanCard: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
+        .background(Color.brandSurface, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.brandPrimary, lineWidth: plan.isPopular == true ? 2 : 0)

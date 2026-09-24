@@ -9,9 +9,9 @@ final class EventsViewModel: ObservableObject {
     private let service: EventServiceProtocol
     let currentUserID: UUID
 
-    init(currentUserID: UUID, service: EventServiceProtocol = MockEventService()) {
+    init(currentUserID: UUID, service: EventServiceProtocol? = nil) {
         self.currentUserID = currentUserID
-        self.service = service
+        self.service = service ?? MockEventService()
     }
 
     func load() async {

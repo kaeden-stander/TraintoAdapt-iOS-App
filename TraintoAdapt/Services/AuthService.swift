@@ -25,8 +25,8 @@ protocol AuthServiceProtocol {
 final class MockAuthService: AuthServiceProtocol {
     private let store: MockDataStore
 
-    init(store: MockDataStore = .shared) {
-        self.store = store
+    init(store: MockDataStore? = nil) {
+        self.store = store ?? .shared
     }
 
     func signIn(email: String, password: String) async throws -> User {
@@ -39,6 +39,6 @@ final class MockAuthService: AuthServiceProtocol {
     }
 
     func signOut() async {
-        try? await Task.sleep(nanoseconds: 150_000_000)
+        _ = try? await Task.sleep(nanoseconds: 150_000_000)
     }
 }

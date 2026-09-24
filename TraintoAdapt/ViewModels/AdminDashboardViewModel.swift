@@ -12,13 +12,13 @@ final class AdminDashboardViewModel: ObservableObject {
     private let eventService: EventServiceProtocol
 
     init(
-        userService: UserServiceProtocol = MockUserService(),
-        bookingService: BookingServiceProtocol = MockBookingService(),
-        eventService: EventServiceProtocol = MockEventService()
+        userService: UserServiceProtocol? = nil,
+        bookingService: BookingServiceProtocol? = nil,
+        eventService: EventServiceProtocol? = nil
     ) {
-        self.userService = userService
-        self.bookingService = bookingService
-        self.eventService = eventService
+        self.userService = userService ?? MockUserService()
+        self.bookingService = bookingService ?? MockBookingService()
+        self.eventService = eventService ?? MockEventService()
     }
 
     var clients: [User] { allUsers.filter { $0.role == .client } }
@@ -75,12 +75,12 @@ final class AdminDashboardViewModel: ObservableObject {
             category: category,
             hostTrainerID: hostTrainerID
         )
-        try? await eventService.createEvent(event)
+        _ = try? await eventService.createEvent(event)
         await load()
     }
 
     func deleteEvent(_ event: Event) async {
-        try? await eventService.deleteEvent(event.id)
+        _ = try? await eventService.deleteEvent(event.id)
         await load()
     }
 }

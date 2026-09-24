@@ -8,9 +8,9 @@ final class MealPlanViewModel: ObservableObject {
     private let service: MealPlanServiceProtocol
     private let clientID: UUID
 
-    init(clientID: UUID, service: MealPlanServiceProtocol = MockMealPlanService()) {
+    init(clientID: UUID, service: MealPlanServiceProtocol? = nil) {
         self.clientID = clientID
-        self.service = service
+        self.service = service ?? MockMealPlanService()
     }
 
     var mealsGrouped: [(type: MealType, meals: [Meal])] {

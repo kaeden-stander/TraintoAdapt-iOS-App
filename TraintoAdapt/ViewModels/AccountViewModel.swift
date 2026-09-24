@@ -7,9 +7,9 @@ final class AccountViewModel: ObservableObject {
 
     private let userService: UserServiceProtocol
 
-    init(user: User, userService: UserServiceProtocol = MockUserService()) {
+    init(user: User, userService: UserServiceProtocol? = nil) {
         self.user = user
-        self.userService = userService
+        self.userService = userService ?? MockUserService()
     }
 
     func load() async {

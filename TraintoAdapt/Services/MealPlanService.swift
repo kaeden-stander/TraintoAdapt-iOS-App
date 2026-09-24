@@ -13,8 +13,8 @@ protocol MealPlanServiceProtocol {
 final class MockMealPlanService: MealPlanServiceProtocol {
     private let store: MockDataStore
 
-    init(store: MockDataStore = .shared) {
-        self.store = store
+    init(store: MockDataStore? = nil) {
+        self.store = store ?? .shared
     }
 
     func currentMealPlan(forClient clientID: UUID) async -> MealPlan? {

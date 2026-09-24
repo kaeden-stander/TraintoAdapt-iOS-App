@@ -14,14 +14,14 @@ final class TrainerDashboardViewModel: ObservableObject {
 
     init(
         trainerID: UUID,
-        bookingService: BookingServiceProtocol = MockBookingService(),
-        userService: UserServiceProtocol = MockUserService(),
-        mealPlanService: MealPlanServiceProtocol = MockMealPlanService()
+        bookingService: BookingServiceProtocol? = nil,
+        userService: UserServiceProtocol? = nil,
+        mealPlanService: MealPlanServiceProtocol? = nil
     ) {
         self.trainerID = trainerID
-        self.bookingService = bookingService
-        self.userService = userService
-        self.mealPlanService = mealPlanService
+        self.bookingService = bookingService ?? MockBookingService()
+        self.userService = userService ?? MockUserService()
+        self.mealPlanService = mealPlanService ?? MockMealPlanService()
     }
 
     var todaysSessions: [Booking] {
@@ -49,12 +49,12 @@ final class TrainerDashboardViewModel: ObservableObject {
     }
 
     func markCompleted(_ booking: Booking) async {
-        try? await bookingService.markCompleted(booking.id)
+        _ = try? await bookingService.markCompleted(booking.id)
         await load()
     }
 
     func cancel(_ booking: Booking) async {
-        try? await bookingService.cancelBooking(booking.id)
+        _ = try? await bookingService.cancelBooking(booking.id)
         await load()
     }
 }

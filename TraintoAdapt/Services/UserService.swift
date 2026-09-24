@@ -19,8 +19,8 @@ protocol UserServiceProtocol {
 final class MockUserService: UserServiceProtocol {
     private let store: MockDataStore
 
-    init(store: MockDataStore = .shared) {
-        self.store = store
+    init(store: MockDataStore? = nil) {
+        self.store = store ?? .shared
     }
 
     func allUsers() async -> [User] {

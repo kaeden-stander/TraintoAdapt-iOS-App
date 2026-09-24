@@ -4,8 +4,8 @@ import Foundation
 final class HealthViewModel: ObservableObject {
     let manager: HealthKitManager
 
-    init(manager: HealthKitManager = .shared) {
-        self.manager = manager
+    init(manager: HealthKitManager? = nil) {
+        self.manager = manager ?? .shared
     }
 
     var isAuthorized: Bool { manager.isAuthorized }

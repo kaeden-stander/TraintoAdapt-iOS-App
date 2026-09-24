@@ -9,8 +9,8 @@ final class AuthViewModel: ObservableObject {
 
     private let authService: AuthServiceProtocol
 
-    init(authService: AuthServiceProtocol = MockAuthService()) {
-        self.authService = authService
+    init(authService: AuthServiceProtocol? = nil) {
+        self.authService = authService ?? MockAuthService()
     }
 
     var canSubmit: Bool {

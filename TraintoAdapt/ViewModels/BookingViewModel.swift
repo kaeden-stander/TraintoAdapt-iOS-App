@@ -13,12 +13,12 @@ final class BookingViewModel: ObservableObject {
 
     init(
         clientID: UUID,
-        bookingService: BookingServiceProtocol = MockBookingService(),
-        userService: UserServiceProtocol = MockUserService()
+        bookingService: BookingServiceProtocol? = nil,
+        userService: UserServiceProtocol? = nil
     ) {
         self.clientID = clientID
-        self.bookingService = bookingService
-        self.userService = userService
+        self.bookingService = bookingService ?? MockBookingService()
+        self.userService = userService ?? MockUserService()
     }
 
     var upcomingBookings: [Booking] {

@@ -22,8 +22,8 @@ protocol BookingServiceProtocol {
 final class MockBookingService: BookingServiceProtocol {
     private let store: MockDataStore
 
-    init(store: MockDataStore = .shared) {
-        self.store = store
+    init(store: MockDataStore? = nil) {
+        self.store = store ?? .shared
     }
 
     func bookings(forClient clientID: UUID) async -> [Booking] {

@@ -3,6 +3,7 @@ import SwiftUI
 struct LiveHomeView: View {
     @ObservedObject var session: LiveSessionStore
     @StateObject private var bookingViewModel: LiveBookingViewModel
+    @StateObject private var healthViewModel = HealthViewModel()
     @State private var safariURL: URL?
 
     init(session: LiveSessionStore) {
@@ -38,6 +39,8 @@ struct LiveHomeView: View {
                         }
                     }
                     .padding(.horizontal)
+
+                    healthSection
                 } else if session.isLoadingMe {
                     ProgressView().padding(.top, 60)
                 } else if let error = session.loadError {
@@ -52,14 +55,67 @@ struct LiveHomeView: View {
         .task {
             await session.refreshMe()
             await bookingViewModel.load()
+            await SessionNotificationScheduler.shared.requestAuthorizationIfNeeded()
+            if healthViewModel.isAuthorized {
+                await healthViewModel.refresh()
+            }
         }
         .refreshable {
             await session.refreshMe()
             await bookingViewModel.load()
+            await healthViewModel.refresh()
         }
         .safariSheet($safariURL) {
             Task { await session.refreshMe() }
         }
+    }
+
+    @ViewBuilder
+    private var healthSection: some View {
+        SectionCard(title: "Health & Activity") {
+            VStack(alignment: .leading, spacing: 16) {
+                if !healthViewModel.isHealthDataAvailable {
+                    EmptyStateRow(systemImage: "xmark.circle", message: "Health data isn't available on this device.")
+                } else if !healthViewModel.isAuthorized {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Connect Apple Health to see your activity here and track workouts from the app.")
+                            .font(Font.subheadline)
+                            .foregroundStyle(.secondary)
+                        Button {
+                            Task { await healthViewModel.connect() }
+                        } label: {
+                            Label("Connect Apple Health", systemImage: "applewatch")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(Color.brandPrimary)
+                    }
+                } else {
+                    HealthSummaryRow(summary: healthViewModel.summary)
+
+                    if let last = healthViewModel.recentWorkouts.first {
+                        Divider()
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Last workout")
+                                .font(Font.caption)
+                                .foregroundStyle(.secondary)
+                            Text("\(last.activityName) · \(last.durationMinutes) min · \(last.start.formatted(date: .abbreviated, time: .omitted))")
+                                .font(Font.subheadline.weight(.medium))
+                        }
+                    }
+
+                    NavigationLink {
+                        LiveWorkoutTrackerView()
+                    } label: {
+                        Label("Track a Workout", systemImage: "figure.run")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(Color.brandPrimary)
+                }
+            }
+        }
+        .padding(.horizontal)
     }
 
     private func statsRow(_ me: MeResponse) -> some View {

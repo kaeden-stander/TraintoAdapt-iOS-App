@@ -47,7 +47,6 @@ struct TrainerDashboardView: View {
         HStack(spacing: 12) {
             StatTile(title: "Clients", value: "\(viewModel.clients.count)", systemImage: "person.2.fill")
             StatTile(title: "Upcoming", value: "\(viewModel.upcomingSessions.count + viewModel.todaysSessions.count)", systemImage: "calendar")
-            StatTile(title: "Meal Plans", value: "\(viewModel.mealPlans.count)", systemImage: "fork.knife")
         }
         .padding(.horizontal)
     }

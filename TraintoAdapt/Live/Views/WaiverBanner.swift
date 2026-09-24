@@ -9,7 +9,7 @@ struct WaiverBanner: View {
 
     var body: some View {
         Button {
-            safariURL = waiverURL
+            safariURL = waiverURL.map { SupabaseAuthService.shared.authenticatedURL($0) }
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: "signature")
@@ -17,7 +17,7 @@ struct WaiverBanner: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Sign your waiver to book sessions")
                         .font(Font.subheadline.weight(.semibold))
-                    Text("Tap to open it — you'll need to sign in on the website.")
+                    Text("Tap to open it and sign on the website.")
                         .font(Font.caption)
                         .foregroundStyle(.secondary)
                 }

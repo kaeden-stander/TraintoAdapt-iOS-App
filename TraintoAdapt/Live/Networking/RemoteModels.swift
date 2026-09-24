@@ -138,11 +138,18 @@ struct RemoteBooking: Decodable, Identifiable, Hashable {
     let endsAt: Date
     let status: RemoteBookingStatus
     let notes: String?
+    /// Not documented in the client API guide — decoded only in case an
+    /// admin-scoped call to the same endpoint includes them. `LiveAdminView`
+    /// falls back to a generic label when these are absent.
+    let clientName: String?
+    let clientEmail: String?
 
     enum CodingKeys: String, CodingKey {
         case id, notes, status
         case startsAt = "starts_at"
         case endsAt = "ends_at"
+        case clientName = "client_name"
+        case clientEmail = "client_email"
     }
 
     static func == (lhs: RemoteBooking, rhs: RemoteBooking) -> Bool { lhs.id == rhs.id }

@@ -16,11 +16,6 @@ struct ClientTabView: View {
             .tabItem { Label("Book", systemImage: "calendar") }
 
             NavigationStack {
-                MealPlanView(client: client)
-            }
-            .tabItem { Label("Meal Plan", systemImage: "fork.knife") }
-
-            NavigationStack {
                 EventsListView(currentUser: client)
             }
             .tabItem { Label("Events", systemImage: "star.fill") }

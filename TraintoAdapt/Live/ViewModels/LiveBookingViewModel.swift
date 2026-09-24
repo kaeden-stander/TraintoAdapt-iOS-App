@@ -46,6 +46,7 @@ final class LiveBookingViewModel: ObservableObject {
             async let fetchedBookings = api.bookings()
             slots = try await fetchedSlots
             bookings = try await fetchedBookings
+            await SessionNotificationScheduler.shared.reschedule(for: bookings)
         } catch let error as APIError {
             if await session.handleIfUnauthorized(error) { return }
             errorMessage = error.message

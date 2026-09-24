@@ -1,6 +1,16 @@
 import Foundation
 import HealthKit
 
+enum HealthKitError: LocalizedError {
+    case saveFailed
+
+    var errorDescription: String? {
+        switch self {
+        case .saveFailed: "Couldn't save the workout to Apple Health. Please try again."
+        }
+    }
+}
+
 /// Reads activity and workout data from Apple Health so a client's Apple
 /// Watch data (steps, heart rate, active energy, workouts) shows up in the
 /// app automatically — the Watch already syncs into HealthKit on its own,
@@ -40,9 +50,22 @@ final class HealthKitManager: ObservableObject {
         return types
     }
 
+    /// Workouts recorded in-app (see `saveWorkout`) are written back to
+    /// Health, so the app needs share access to these types as well as read
+    /// access to everything above.
+    private var shareTypes: Set<HKSampleType> {
+        var types: Set<HKSampleType> = [HKObjectType.workoutType()]
+        if let energy = HKObjectType.quantityType(forIdentifier: .activeEnergyBurned) {
+            types.insert(energy)
+        }
+        return types
+    }
+
     var isHealthDataAvailable: Bool {
         HKHealthStore.isHealthDataAvailable()
     }
+
+    var lastWorkout: WorkoutSample? { recentWorkouts.first }
 
     func requestAuthorization() async {
         guard isHealthDataAvailable else {
@@ -50,7 +73,7 @@ final class HealthKitManager: ObservableObject {
             return
         }
         do {
-            try await healthStore.requestAuthorization(toShare: [], read: readTypes)
+            try await healthStore.requestAuthorization(toShare: shareTypes, read: readTypes)
             isAuthorized = true
             lastError = nil
             await refreshAll()
@@ -77,6 +100,41 @@ final class HealthKitManager: ObservableObject {
         )
         todaySummary = summary
         recentWorkouts = await workouts
+    }
+
+    // MARK: - Recording a workout
+
+    /// Saves a workout tracked in-app (see `WorkoutTrackerViewModel`) back
+    /// to Apple Health. No Apple Watch or `HKWorkoutSession` is required —
+    /// this builds a completed workout sample directly, which is the
+    /// standard approach for an iPhone-only workout logger.
+    @discardableResult
+    func saveWorkout(
+        activityType: HKWorkoutActivityType,
+        start: Date,
+        end: Date,
+        activeEnergyKcal: Double?
+    ) async throws -> HKWorkout {
+        let configuration = HKWorkoutConfiguration()
+        configuration.activityType = activityType
+
+        let builder = HKWorkoutBuilder(healthStore: healthStore, configuration: configuration, device: .local())
+        try await builder.beginCollection(at: start)
+
+        if let activeEnergyKcal, activeEnergyKcal > 0,
+           let energyType = HKObjectType.quantityType(forIdentifier: .activeEnergyBurned) {
+            let quantity = HKQuantity(unit: .kilocalorie(), doubleValue: activeEnergyKcal)
+            let sample = HKQuantitySample(type: energyType, quantity: quantity, start: start, end: end)
+            try await builder.addSamples([sample])
+        }
+
+        try await builder.endCollection(at: end)
+        let workout = try await builder.finishWorkout()
+        guard let workout else {
+            throw HealthKitError.saveFailed
+        }
+        await refreshAll()
+        return workout
     }
 
     // MARK: - Queries
@@ -168,7 +226,7 @@ private extension NSPredicate {
     }
 }
 
-private extension HKWorkoutActivityType {
+extension HKWorkoutActivityType {
     var displayName: String {
         switch self {
         case .traditionalStrengthTraining, .functionalStrengthTraining: "Strength Training"

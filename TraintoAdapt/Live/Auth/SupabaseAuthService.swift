@@ -28,6 +28,29 @@ final class SupabaseAuthService: NSObject, ObservableObject {
 
     var isSignedIn: Bool { session != nil }
 
+    /// Appends the current session's tokens to a `client.traintoadapt.co.uk`
+    /// URL as a fragment, in the same shape Supabase's own auth redirects
+    /// use (`#access_token=...&refresh_token=...`). Most Supabase-backed
+    /// web apps auto-detect and sign in from this on page load, so opening
+    /// the waiver or the client portal in Safari doesn't ask the person to
+    /// log in again. Only applied to the app's own portal domain — Stripe
+    /// checkout/billing-portal links are already pre-authenticated and are
+    /// left untouched.
+    func authenticatedURL(_ url: URL) -> URL {
+        guard let session, url.host == AppConfig.portal.host,
+              var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return url
+        }
+        let expiresIn = max(1, Int(session.expiresAt.timeIntervalSinceNow))
+        components.fragment = [
+            "access_token=\(session.accessToken)",
+            "refresh_token=\(session.refreshToken)",
+            "expires_in=\(expiresIn)",
+            "token_type=bearer"
+        ].joined(separator: "&")
+        return components.url ?? url
+    }
+
     // MARK: - Email / password
 
     func signIn(email: String, password: String) async throws {

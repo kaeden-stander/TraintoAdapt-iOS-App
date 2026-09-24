@@ -154,14 +154,20 @@ private struct PlanCard: View {
 
             Button(action: onSelect) {
                 Text(buttonTitle ?? "Start \(plan.name) plan")
+                    .fontWeight(.semibold)
+                    .foregroundStyle(plan.isPopular == true ? .black : Color.brandPrimary)
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(plan.isPopular == true ? .borderedProminent : .bordered)
             .tint(Color.brandPrimary)
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.brandPrimary, lineWidth: plan.isPopular == true ? 2 : 0)
+        )
     }
 
     private var unitLabel: String {

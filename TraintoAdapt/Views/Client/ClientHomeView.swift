@@ -78,13 +78,6 @@ struct ClientHomeView: View {
                 Divider().padding(.leading, 52)
 
                 NavigationLink {
-                    MealPlanView(client: client)
-                } label: {
-                    QuickLinkRow(systemImage: "fork.knife", title: "View Meal Plan")
-                }
-                Divider().padding(.leading, 52)
-
-                NavigationLink {
                     EventsListView(currentUser: client)
                 } label: {
                     QuickLinkRow(systemImage: "star.fill", title: "Upcoming Events")

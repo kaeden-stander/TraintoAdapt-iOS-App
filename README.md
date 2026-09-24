@@ -32,22 +32,36 @@ The login screen (`Views/Auth/LoginView.swift`) is the one place styled to match
 
 Signing in for real (`Live/`) gets you:
 
-- **Home**: waiver-signing prompt if needed, credits remaining, current plan, next booked session.
-- **Book**: real availability from `/slots` (this already reflects Adam's Google Calendar — see below), book a session, see upcoming sessions, cancel.
-- **Plans**: the same four pricing tabs as the website (Monthly, Pay as you go, Online, At your home), pulled from `/plans`; tapping a plan opens Stripe Checkout in Safari, and reloads your account afterwards.
+- **Home**: waiver-signing prompt if needed, credits remaining, current plan, next booked session, today's Apple Health activity and your last workout.
+- **Book**: a day picker plus a grid of open time slots from `/slots` (this already reflects Adam's Google Calendar — see below), book a session, see and cancel upcoming sessions.
+- **Plans**: the same four pricing tabs as the website (Monthly, Pay as you go, Online, At your home), pulled from `/plans`, with the popular plan highlighted and pay-as-you-go priced from your own account's rate; tapping a plan opens Stripe Checkout in Safari (Apple Pay shows up there automatically — see **Payments** below) and reloads your account afterwards.
+- **Events**: create (admin) and RSVP to studio events. There's no backend events endpoint yet, so these are stored on-device for now — see **Events (local for now)** below.
+- **Admin** (only shown when `/me` reports `isAdmin: true`): an exploratory schedule view — see **Admin view** below.
 - **Account**: profile, membership/credits summary, "Manage billing" (Stripe customer portal), receipts, sign out, and a delete-account link (mailto, per Apple's App Store requirement).
 
-### Demo Mode (Trainer / Admin / sample Client)
+Meal planning was removed from Demo Mode for now (still in the codebase, just not reachable from the tab bar/quick links) — ask if you want it back.
 
-Three role-based mock screens, routed by `RootTabView`, unchanged from local sample data — useful for seeing what a future Trainer/Admin experience could look like once the backend supports it:
+### Admin view
 
-- **Client**: home dashboard, book/cancel sessions, meal plan and macros, browse and RSVP to events, account with Apple Health/Watch data.
-- **Trainer**: dashboard, schedule, client list and detail, meal plan editor.
-- **Admin**: studio dashboard, manage clients/trainers, create/delete studio events.
+The backend guide only documents client-facing endpoints — there's no dedicated admin API. `LiveAdminView` calls the same `/bookings` endpoint every client uses and shows whatever comes back; if the backend's row-level security grants admin accounts a broader view (every client's bookings, not just their own), this becomes a real schedule for free. If not, it'll just show the admin's own bookings, and the screen says so. Worth confirming either way by signing in with a real admin account. `RemoteBooking` also decodes optional `client_name`/`client_email` fields in case an admin-scoped response includes them, even though they're not in the documented shape.
 
-### Apple Watch / Health integration
+### Events (local for now)
 
-`HealthKitManager` (`Services/HealthKitManager.swift`) requests read access to steps, active energy, heart rate, resting heart rate, exercise minutes and workouts. An Apple Watch paired to the client's iPhone already syncs this data into Apple Health automatically, so reading from HealthKit is the standard, low-friction way to bring Watch data into the app. This shows up in the demo Client's Home tab and **Account → Health & Activity Data**. (It isn't wired into the live client experience yet, since the backend has no endpoint to receive it — see **Next steps**.)
+`LiveEventsView` is a real, working events feature — admins can create/delete, everyone can RSVP — but since there's no backend endpoint for it yet, events are persisted as JSON on-device (`Live/Events/LocalEventStore.swift`). That means they won't sync across a client's other devices or show up for other clients until the backend adds a proper endpoint; the screen says this plainly. Once an endpoint exists, swap `LocalEventStore` for calls through `RemoteAPIClient`, the same way the mock `EventService` was replaced for bookings.
+
+### Apple Watch / Health integration + in-app workout tracking
+
+`HealthKitManager` (`Services/HealthKitManager.swift`) requests read access to steps, active energy, heart rate, resting heart rate, exercise minutes and workouts, and share access to log workouts. An Apple Watch paired to the client's iPhone already syncs its data into Apple Health automatically, so reading from HealthKit is the standard way to bring Watch data into the app — this is wired into both the demo Client's Home tab and the **live** Home tab (today's activity + last workout).
+
+You don't need an Apple Watch to log a session, either: **Home → Track a Workout** (`Live/Views/LiveWorkoutTrackerView.swift`) is a simple start/pause/finish stopwatch that saves the completed workout to Apple Health via `HKWorkoutBuilder` when you finish, so it shows up in Health (and in this app) right alongside anything synced from a Watch.
+
+### Session reminder notifications
+
+Local notifications (no push/APNs setup needed) fire 1 hour and 30 minutes before each upcoming session. `Live/Notifications/SessionNotificationScheduler.swift` asks for permission once and reschedules everything from the current `/bookings` list whenever it's fetched, so cancelling or moving a session doesn't leave a stale reminder behind.
+
+### Payments
+
+Checkout happens through the web link the backend returns (`/checkout`), opened in Safari, per the backend guide's own instruction — not through Apple's in-app purchase. Apple's StoreKit/IAP is deliberately not used here: the guide relies on the "physical service" exception to Apple's in-app purchase requirement, and adding a native purchase button would put that at risk. The good news is **Apple Pay already works with zero extra code** — Stripe's hosted checkout page shows an Apple Pay button automatically on a supported device, so this is really just "open the link in Safari," already built.
 
 ## Real backend setup
 
@@ -62,6 +76,10 @@ To turn on Apple/Google sign-in against your Supabase project, two one-time dash
    - Add `traintoadapt://auth-callback` to **Redirect URLs** — this is the custom URL scheme (already registered in `Info.plist`) that the Google sign-in browser flow redirects back to.
 
 On the Apple side, **Sign in with Apple** needs to be enabled as a capability for the App ID in the Apple Developer portal, and you'll need to select your own team in Xcode's *Signing & Capabilities* tab (the project ships with automatic signing but no team, since that's tied to your Apple ID — see **Signing** below).
+
+### Auto-login for website links
+
+Opening the waiver or the client portal in Safari passes the app's current Supabase session along as a URL fragment (`SupabaseAuthService.authenticatedURL(_:)`), in the same `#access_token=...&refresh_token=...` shape Supabase's own auth redirects use. Most Supabase-backed web apps auto-detect and sign in from this on page load (it's the default behaviour of `detectSessionInUrl` in the Supabase JS client) — but this hasn't been verified against the actual website, so it's worth a quick check with whoever built it. If the site doesn't pick it up, the person just sees a normal login page instead, so this fails safe either way. Stripe checkout/billing-portal links are left untouched, since those already come back pre-authenticated from the backend.
 
 ### How Google Calendar fits in
 
@@ -99,8 +117,11 @@ TraintoAdapt/
     Config/       Backend connection details
     Auth/         Keychain session store, Supabase REST auth, crypto helpers
     Networking/   Typed API client + response models for the real backend
+    Events/       On-device event persistence (no backend endpoint yet)
+    Notifications/ Local session-reminder scheduling
     ViewModels/   @MainActor ObservableObject classes for the live screens
-    Views/        Real Home / Book / Plans / Account screens, Safari wrapper
+    Views/        Real Home / Book / Plans / Events / Admin / Account screens,
+                  workout tracker, Safari wrapper, branded nav bar helper
   Resources/      Assets.xcassets
 ```
 
@@ -110,10 +131,12 @@ The Demo Mode services (`AuthServiceProtocol`, `BookingServiceProtocol`, etc.) a
 
 ## Next steps
 
-- **Trainer/Admin API**: once the backend exposes management endpoints, the same `Live/` pattern used for the client can be extended to replace those Demo Mode screens.
-- **Push notifications**: session reminders, waiver nudges.
-- **watchOS companion app**: a dedicated watch target, beyond the current HealthKit read integration.
-- **Sync HealthKit workouts to the backend**: there's no endpoint for this yet; `HealthKitManager` currently only feeds the demo Client's Home tab.
+- **Admin/events APIs**: confirm what the `/bookings` endpoint actually returns for an admin account, and add a real events endpoint — see **Admin view** and **Events (local for now)** above.
+- **Verify auto-login**: check that the website's Supabase client picks up the token-in-URL pattern described above; adjust the fragment shape if it expects something different.
+- **Remote push notifications**: the current reminders are local-only (scheduled from data already on the device). Adding real push (waiver nudges, trainer messages, etc. sent from the backend) needs APNs setup — a Push Notifications capability, an aps-environment entitlement, and a server-side sender — none of which exists yet.
+- **watchOS companion app**: a dedicated watch target for starting a booked session on-wrist, beyond the current phone-only workout tracker.
+- **Sync in-app-tracked workouts to the backend**: they're saved to Apple Health, but the backend has no endpoint to also receive them directly.
+- **Meal planning**: removed from Demo Mode navigation for now (code still present) — reinstate or rebuild against a real endpoint if wanted back.
 - **Automated tests**: a unit test target for the live and demo view models, and UI tests for sign-in and booking.
 
 ## Development branch

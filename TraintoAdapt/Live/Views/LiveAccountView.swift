@@ -4,6 +4,7 @@ struct LiveAccountView: View {
     @ObservedObject var session: LiveSessionStore
     @StateObject private var billingViewModel: LiveBillingViewModel
     @State private var showingSignOutConfirm = false
+    @State private var portalSafariURL: URL?
 
     init(session: LiveSessionStore) {
         self.session = session
@@ -78,7 +79,9 @@ struct LiveAccountView: View {
             }
 
             Section {
-                Link(destination: AppConfig.portal) {
+                Button {
+                    portalSafariURL = SupabaseAuthService.shared.authenticatedURL(AppConfig.portal)
+                } label: {
                     Label("Open client portal in browser", systemImage: "safari")
                 }
                 Link(destination: URL(string: "mailto:\(AppConfig.supportEmail)?subject=Delete%20my%20account")!) {
@@ -99,6 +102,7 @@ struct LiveAccountView: View {
         .task { await billingViewModel.load() }
         .refreshable { await billingViewModel.load() }
         .safariSheet($billingViewModel.portalURL)
+        .safariSheet($portalSafariURL)
         .confirmationDialog("Sign out of TrainToAdapt?", isPresented: $showingSignOutConfirm, titleVisibility: .visible) {
             Button("Sign Out", role: .destructive) {
                 Task { await session.signOut() }

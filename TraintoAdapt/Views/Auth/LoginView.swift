@@ -6,7 +6,6 @@ struct LoginView: View {
     @StateObject private var liveAuth = LiveAuthViewModel()
     @StateObject private var demoAuth = AuthViewModel()
     @FocusState private var focusedField: Field?
-    @State private var showingEmailForm = false
     @State private var showingDemoMode = false
 
     private enum Field: Hashable {
@@ -19,16 +18,19 @@ struct LoginView: View {
                 VStack(spacing: 24) {
                     header
                     oauthButtons
-                    emailDisclosure
+                    divider
+                    modeSwitcher
+                    formFields
                     messages
                 }
                 .padding(.horizontal, 24)
-                .padding(.vertical, 48)
+                .padding(.top, 36)
+                .padding(.bottom, 24)
 
                 demoModeDisclosure
                     .padding(.bottom, 24)
             }
-            .background(Color.brandInk.ignoresSafeArea())
+            .background(AuthBackground())
             .navigationBarHidden(true)
         }
         .preferredColorScheme(.dark)
@@ -36,11 +38,19 @@ struct LoginView: View {
 
     private var header: some View {
         VStack(spacing: 12) {
-            Image("BrandMark")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 72, height: 72)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+            ZStack {
+                Circle()
+                    .fill(Color.brandPrimary.opacity(0.25))
+                    .frame(width: 108, height: 108)
+                    .blur(radius: 14)
+
+                Image("BrandMark")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 76, height: 76)
+                    .clipShape(RoundedRectangle(cornerRadius: 18))
+                    .shadow(color: Color.brandPrimary.opacity(0.4), radius: 16, y: 6)
+            }
 
             Text("TrainToAdapt")
                 .font(Font.title.bold())
@@ -49,7 +59,7 @@ struct LoginView: View {
                 .font(Font.footnote)
                 .foregroundStyle(Color.brandSecondary)
         }
-        .padding(.bottom, 8)
+        .padding(.bottom, 4)
     }
 
     private var oauthButtons: some View {
@@ -66,41 +76,33 @@ struct LoginView: View {
             Button {
                 Task { await liveAuth.signInWithGoogle() }
             } label: {
-                HStack {
-                    Image(systemName: "globe")
-                    Text("Continue with Google")
-                        .fontWeight(.semibold)
+                HStack(spacing: 10) {
+                    Image("GoogleLogo")
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                    Text("Sign in with Google")
+                        .font(Font.system(size: 17, weight: .medium))
                 }
-                .foregroundStyle(.black)
+                .foregroundStyle(Color(red: 0.235, green: 0.251, blue: 0.263))
                 .frame(maxWidth: .infinity)
             }
             .frame(height: 50)
             .background(.white, in: RoundedRectangle(cornerRadius: 12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.black.opacity(0.12), lineWidth: 1)
+            )
         }
     }
 
-    private var emailDisclosure: some View {
-        VStack(spacing: 20) {
-            Button {
-                withAnimation(.easeInOut(duration: 0.2)) { showingEmailForm.toggle() }
-            } label: {
-                HStack(spacing: 8) {
-                    Rectangle().fill(Color.brandSecondary.opacity(0.3)).frame(height: 1)
-                    Text(showingEmailForm ? "Hide" : "or continue with email")
-                        .font(Font.footnote)
-                        .foregroundStyle(Color.brandSecondary)
-                        .fixedSize()
-                    Rectangle().fill(Color.brandSecondary.opacity(0.3)).frame(height: 1)
-                }
-            }
-
-            if showingEmailForm {
-                VStack(spacing: 16) {
-                    modeSwitcher
-                    formFields
-                }
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            }
+    private var divider: some View {
+        HStack(spacing: 8) {
+            Rectangle().fill(Color.brandSecondary.opacity(0.3)).frame(height: 1)
+            Text("or sign in with email")
+                .font(Font.footnote)
+                .foregroundStyle(Color.brandSecondary)
+                .fixedSize()
+            Rectangle().fill(Color.brandSecondary.opacity(0.3)).frame(height: 1)
         }
     }
 
@@ -217,6 +219,60 @@ struct LoginView: View {
             }
         }
         .padding(.horizontal, 24)
+    }
+}
+
+/// The login screen's backdrop: the ink base, a cyan banner glow behind the
+/// header, a couple of soft brand-coloured blobs for depth, and a faint dot
+/// grid for texture — a bit more considered than a flat black rectangle.
+private struct AuthBackground: View {
+    var body: some View {
+        ZStack {
+            Color.brandInk
+
+            LinearGradient(
+                colors: [Color.brandPrimary.opacity(0.32), Color.brandInk.opacity(0)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 380)
+            .frame(maxHeight: .infinity, alignment: .top)
+
+            Circle()
+                .fill(Color.brandPrimary.opacity(0.22))
+                .frame(width: 280, height: 280)
+                .blur(radius: 90)
+                .offset(x: -130, y: -300)
+
+            Circle()
+                .fill(Color.brandSecondary.opacity(0.16))
+                .frame(width: 240, height: 240)
+                .blur(radius: 80)
+                .offset(x: 150, y: 40)
+
+            DotGridPattern()
+                .opacity(0.05)
+        }
+        .ignoresSafeArea()
+    }
+}
+
+private struct DotGridPattern: View {
+    var body: some View {
+        Canvas { context, size in
+            let spacing: CGFloat = 22
+            let dotSize: CGFloat = 2
+            var y: CGFloat = spacing / 2
+            while y < size.height {
+                var x: CGFloat = spacing / 2
+                while x < size.width {
+                    let rect = CGRect(x: x, y: y, width: dotSize, height: dotSize)
+                    context.fill(Path(ellipseIn: rect), with: .color(.white))
+                    x += spacing
+                }
+                y += spacing
+            }
+        }
     }
 }
 

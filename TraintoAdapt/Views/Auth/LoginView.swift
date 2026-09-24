@@ -44,13 +44,17 @@ struct LoginView: View {
                         } label: {
                             if viewModel.isSigningIn {
                                 ProgressView()
+                                    .tint(.black)
                                     .frame(maxWidth: .infinity)
                             } else {
                                 Text("Sign In")
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.black)
                                     .frame(maxWidth: .infinity)
                             }
                         }
                         .buttonStyle(.borderedProminent)
+                        .tint(Color.brandPrimary)
                         .controlSize(.large)
                         .disabled(!viewModel.canSubmit)
                     }
@@ -60,24 +64,33 @@ struct LoginView: View {
                 }
                 .padding(.vertical, 40)
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.brandInk.ignoresSafeArea())
             .navigationBarHidden(true)
         }
+        .preferredColorScheme(.dark)
     }
 
     private var header: some View {
-        VStack(spacing: 10) {
-            Image(systemName: "figure.strengthtraining.traditional")
-                .font(.system(size: 44))
-                .foregroundStyle(Color.brandPrimary)
-                .padding(20)
-                .background(Circle().fill(Color.brandPrimary.opacity(0.12)))
+        VStack(spacing: 14) {
+            ZStack {
+                Circle()
+                    .fill(Color.brandPrimary.opacity(0.18))
+                    .frame(width: 128, height: 128)
+                    .blur(radius: 6)
+
+                Image("BrandMark")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 96, height: 96)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+            }
 
             Text("TrainToAdapt")
                 .font(.largeTitle.bold())
+                .foregroundStyle(.white)
             Text("traintoadapt.co.uk")
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.brandSecondary)
         }
     }
 
@@ -85,7 +98,7 @@ struct LoginView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Quick demo access")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.brandSecondary)
                 .textCase(.uppercase)
 
             HStack(spacing: 10) {
@@ -100,6 +113,7 @@ struct LoginView: View {
                             .padding(.vertical, 10)
                     }
                     .buttonStyle(.bordered)
+                    .tint(Color.brandSecondary)
                 }
             }
         }

@@ -69,10 +69,12 @@ struct EventRow: View {
                 onToggleRSVP()
             } label: {
                 Text(isAttending ? "Going ✓" : "RSVP")
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.black)
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
-            .tint(isAttending ? .gray : Color.brandPrimary)
+            .tint(isAttending ? Color.brandSecondary : Color.brandPrimary)
             .disabled(!isAttending && event.isFull)
         }
         .padding(.vertical, 6)

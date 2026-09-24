@@ -2,6 +2,15 @@
 
 Native iOS app for [traintoadapt.co.uk](https://traintoadapt.co.uk), built with SwiftUI. This is a working first pass: it opens and runs in Xcode with sample data, and the architecture is ready to swap in a real backend.
 
+## Branding
+
+The app icon and login screen use the TrainToAdapt logo mark, sampled directly for two brand colours (`Resources/Assets.xcassets`):
+
+- `AccentColor` — the cyan from the swoosh (`#58C6E3`), used app-wide as the tint colour for buttons, links and highlights (`Color.brandPrimary` in `Views/Shared/Color+Brand.swift`).
+- `BrandSecondary` — the warm grey from the "T" (`#AFABA2`), used for muted/secondary brand accents (`Color.brandSecondary`).
+
+The login screen (`Views/Auth/LoginView.swift`) is the one place styled to match the logo's black background exactly (`Color.brandInk`, forced dark regardless of system appearance), since it's the app's main branding moment; the rest of the app uses standard adaptive light/dark backgrounds with the brand cyan as accent, so lists and forms stay readable in both appearances.
+
 ## Requirements
 
 - Xcode 16 or later

@@ -152,14 +152,25 @@ private struct PlanCard: View {
                 }
             }
 
-            Button(action: onSelect) {
-                Text(buttonTitle ?? "Start \(plan.name) plan")
-                    .fontWeight(.semibold)
-                    .foregroundStyle(plan.isPopular == true ? .black : Color.brandPrimary)
-                    .frame(maxWidth: .infinity)
+            if plan.isPopular == true {
+                Button(action: onSelect) {
+                    Text(buttonTitle ?? "Start \(plan.name) plan")
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.black)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Color.brandPrimary)
+            } else {
+                Button(action: onSelect) {
+                    Text(buttonTitle ?? "Start \(plan.name) plan")
+                        .fontWeight(.semibold)
+                        .foregroundStyle(Color.brandPrimary)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .tint(Color.brandPrimary)
             }
-            .buttonStyle(plan.isPopular == true ? .borderedProminent : .bordered)
-            .tint(Color.brandPrimary)
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)

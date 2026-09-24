@@ -6,6 +6,7 @@ struct LoginView: View {
     @StateObject private var liveAuth = LiveAuthViewModel()
     @StateObject private var demoAuth = AuthViewModel()
     @FocusState private var focusedField: Field?
+    @State private var showingEmailForm = false
     @State private var showingDemoMode = false
 
     private enum Field: Hashable {
@@ -15,15 +16,17 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 28) {
+                VStack(spacing: 24) {
                     header
-                    modeSwitcher
-                    formFields
-                    messages
                     oauthButtons
-                    demoModeDisclosure
+                    emailDisclosure
+                    messages
                 }
-                .padding(.vertical, 40)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 48)
+
+                demoModeDisclosure
+                    .padding(.bottom, 24)
             }
             .background(Color.brandInk.ignoresSafeArea())
             .navigationBarHidden(true)
@@ -32,26 +35,72 @@ struct LoginView: View {
     }
 
     private var header: some View {
-        VStack(spacing: 14) {
-            ZStack {
-                Circle()
-                    .fill(Color.brandPrimary.opacity(0.18))
-                    .frame(width: 128, height: 128)
-                    .blur(radius: 6)
-
-                Image("BrandMark")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 96, height: 96)
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
-            }
+        VStack(spacing: 12) {
+            Image("BrandMark")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 72, height: 72)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
 
             Text("TrainToAdapt")
-                .font(Font.largeTitle.bold())
+                .font(Font.title.bold())
                 .foregroundStyle(.white)
             Text("traintoadapt.co.uk")
-                .font(Font.subheadline)
+                .font(Font.footnote)
                 .foregroundStyle(Color.brandSecondary)
+        }
+        .padding(.bottom, 8)
+    }
+
+    private var oauthButtons: some View {
+        VStack(spacing: 12) {
+            SignInWithAppleButton(.signIn) { request in
+                liveAuth.prepareAppleRequest(request)
+            } onCompletion: { result in
+                Task { await liveAuth.handleAppleCompletion(result) }
+            }
+            .signInWithAppleButtonStyle(.white)
+            .frame(height: 50)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+
+            Button {
+                Task { await liveAuth.signInWithGoogle() }
+            } label: {
+                HStack {
+                    Image(systemName: "globe")
+                    Text("Continue with Google")
+                        .fontWeight(.semibold)
+                }
+                .foregroundStyle(.black)
+                .frame(maxWidth: .infinity)
+            }
+            .frame(height: 50)
+            .background(.white, in: RoundedRectangle(cornerRadius: 12))
+        }
+    }
+
+    private var emailDisclosure: some View {
+        VStack(spacing: 20) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) { showingEmailForm.toggle() }
+            } label: {
+                HStack(spacing: 8) {
+                    Rectangle().fill(Color.brandSecondary.opacity(0.3)).frame(height: 1)
+                    Text(showingEmailForm ? "Hide" : "or continue with email")
+                        .font(Font.footnote)
+                        .foregroundStyle(Color.brandSecondary)
+                        .fixedSize()
+                    Rectangle().fill(Color.brandSecondary.opacity(0.3)).frame(height: 1)
+                }
+            }
+
+            if showingEmailForm {
+                VStack(spacing: 16) {
+                    modeSwitcher
+                    formFields
+                }
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
         }
     }
 
@@ -61,11 +110,10 @@ struct LoginView: View {
             Text("Create Account").tag(LiveAuthViewModel.Mode.signUp)
         }
         .pickerStyle(.segmented)
-        .padding(.horizontal)
     }
 
     private var formFields: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 12) {
             if liveAuth.mode == .signUp {
                 TextField("Full name", text: $liveAuth.fullName)
                     .textContentType(.name)
@@ -83,7 +131,7 @@ struct LoginView: View {
                 .padding()
                 .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
 
-            SecureField("Password (min. 8 characters)", text: $liveAuth.password)
+            SecureField("Password", text: $liveAuth.password)
                 .textContentType(liveAuth.mode == .signIn ? .password : .newPassword)
                 .focused($focusedField, equals: .password)
                 .padding()
@@ -106,6 +154,7 @@ struct LoginView: View {
             .tint(Color.brandPrimary)
             .controlSize(.large)
             .disabled(!liveAuth.canSubmit)
+            .padding(.top, 4)
 
             if liveAuth.mode == .signIn {
                 Button("Forgot password?") {
@@ -115,7 +164,6 @@ struct LoginView: View {
                 .foregroundStyle(Color.brandSecondary)
             }
         }
-        .padding(.horizontal)
     }
 
     @ViewBuilder
@@ -124,48 +172,14 @@ struct LoginView: View {
             Text(errorMessage)
                 .font(Font.footnote)
                 .foregroundStyle(.red)
-                .padding(.horizontal)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         if let infoMessage = liveAuth.infoMessage {
             Text(infoMessage)
                 .font(Font.footnote)
                 .foregroundStyle(Color.brandPrimary)
-                .padding(.horizontal)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-    }
-
-    private var oauthButtons: some View {
-        VStack(spacing: 12) {
-            HStack {
-                Rectangle().fill(Color.brandSecondary.opacity(0.3)).frame(height: 1)
-                Text("or").font(Font.caption).foregroundStyle(Color.brandSecondary)
-                Rectangle().fill(Color.brandSecondary.opacity(0.3)).frame(height: 1)
-            }
-
-            SignInWithAppleButton(.signIn) { request in
-                liveAuth.prepareAppleRequest(request)
-            } onCompletion: { result in
-                Task { await liveAuth.handleAppleCompletion(result) }
-            }
-            .signInWithAppleButtonStyle(.white)
-            .frame(height: 48)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-
-            Button {
-                Task { await liveAuth.signInWithGoogle() }
-            } label: {
-                Label("Sign in with Google", systemImage: "globe")
-                    .fontWeight(.semibold)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 4)
-            }
-            .buttonStyle(.bordered)
-            .tint(.white)
-            .controlSize(.large)
-        }
-        .padding(.horizontal)
     }
 
     private var demoModeDisclosure: some View {
@@ -174,8 +188,8 @@ struct LoginView: View {
                 withAnimation { showingDemoMode.toggle() }
             } label: {
                 Label(showingDemoMode ? "Hide demo mode" : "Explore in demo mode", systemImage: "eye")
-                    .font(Font.footnote)
-                    .foregroundStyle(Color.brandSecondary)
+                    .font(Font.caption)
+                    .foregroundStyle(Color.brandSecondary.opacity(0.7))
             }
 
             if showingDemoMode {
@@ -202,7 +216,7 @@ struct LoginView: View {
                 }
             }
         }
-        .padding(.horizontal)
+        .padding(.horizontal, 24)
     }
 }
 
